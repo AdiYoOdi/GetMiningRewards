@@ -28,3 +28,5 @@ I identified 4 situations for mining blocks transactions  :
             output[1] is always your own wallet address
             output[2] is the Delegator
             output[3 4 5 ] extra fluf we need to discard
+	    
+Just tought about the transactions in/out of the wallet , those also need to be filtered
