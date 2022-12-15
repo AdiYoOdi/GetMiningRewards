@@ -87,14 +87,12 @@ I identified 4 situations for mining blocks transactions  :
             output[1] is always your own wallet address but the Hydra near it is not the reward but the utxo used in tx : 
                 [outputs][2][value] /= block reward
                 block reward = main_json_response["fees"]
-
     2. Super Staker won the block but there are other transactions , so outputs[2] = superstaker and i check if outputs[3][value] < 5Hydra
         https://explorer.hydrachain.org/tx/55b2f7fde386f31e76ede065320df742c70ae92f7a09d1e78d79f8a384fda3f1
             output[0] is always empty
             output[1] is always your own wallet address
             output[2] is not the delegator in this situation, because the hydra ["value"] = 0.29639692 HYDRA so thats not a reward for staking
                 So i filter results with if statments if value <5H is not delegator  and i say SuperSTaker won 
-
     3. Delegator won the block, only 3 outputs and we check if output[2]< than 5 Hydra :
         https://explorer.hydrachain.org/tx/117e81f24ba7149acea0cd3c159ab0a2202bb0a2d8176c77f81216d0ec17761f
             output[0] is always empty
@@ -108,7 +106,5 @@ I identified 4 situations for mining blocks transactions  :
             output[2] is the Delegator
             output[3 4 5 ] extra fluf we need to discard
     
-
-
 """
 
