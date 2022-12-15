@@ -29,4 +29,4 @@ I identified 4 situations for mining blocks transactions  :
             output[2] is the Delegator
             output[3 4 5 ] extra fluf we need to discard
 	    
-Just tought about the transactions in/out of the wallet , those also need to be filtered
+Just tought about the transactions in/out of the wallet , those also need to be filtered. Maybe filter first all the transactions that have output[0] as value zero , it seems all mined blocks have that 
