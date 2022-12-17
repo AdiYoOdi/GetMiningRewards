@@ -3,6 +3,8 @@ import json
 import pygsheets
 import logging
 import pandas as pd
+import numpy as np
+import openpyxl
 
 logging.basicConfig(level=logging.INFO)
 hydra_decimals = 100000000
@@ -11,16 +13,19 @@ def get_hydra_decimal(hydra_value):
     return int(hydra_value)/hydra_decimals
 
 def check_txs(current_transaction):
-    json_response = []
     for i in range(len(current_transaction)):
         endpoint = f"https://explorer.hydrachain.org/api/tx/{current_transaction[i]}" #don't forget [i] for loops
         headers = {'User-Agent': '...', 'referer': 'https://...'}
         response = requests.get(endpoint, headers=headers)
-        json_response_loop = json.loads(response.text)
+        json_response_loop = json.loads(response.text)        
+
         outputs = json_response_loop["outputs"]
+        # outputs_zero = json_response_loop["outputs"][0].get("value") #For future use to check if [0]value == None 
+
 
         block_reward = abs(get_hydra_decimal(json_response_loop["fees"]))
-            
+
+        dict_delegator = []
         if len(outputs) > 3 : # This is a block won by delegator but has other transactions on it , but there are those cases where extra txs are present but the SuperStaker  won so we need to figure out how to identify that case and discard them 
             delegator = json_response_loop["outputs"][2]
             other_tx = json_response_loop["outputs"]
@@ -38,37 +43,56 @@ def check_txs(current_transaction):
                 delegator_reward = get_hydra_decimal(delegator["value"])
                 delegator_address = delegator["address"]
                 super_staker_fee = block_reward - other_values_total
-                print(delegator_address)
-                print(delegator_reward)
-                print(super_staker_fee)
-                print("output 2")
+                dict_delegator.append(delegator_address)
+                dict_delegator.append(delegator_reward)
+                dict_delegator.append(super_staker_fee)
                 
             else:
                 correct_address_is_staker = json_response_loop["outputs"][1]
                 correct_address = correct_address_is_staker["address"]
                 super_staker_fee = block_reward
-                print(correct_address)
-                print(super_staker_fee)
-                print("output 1")
+                delegator_reward = int(0)
+                dict_delegator.append(correct_address)                
+                dict_delegator.append(super_staker_fee)
+                dict_delegator.append(delegator_reward)
 
 
         if len(outputs)  == 2:  # This is a block won by super staker 
             super_staker = json_response_loop["outputs"][1]
             super_staker_address = super_staker["address"]
             super_staker_reward = block_reward
-            print(super_staker_address)
-            print(super_staker_reward)
-            print("output 3")
+            super_staker_fee = "0"
+            dict_delegator.append(super_staker_address)
+            dict_delegator.append(super_staker_reward)
+            dict_delegator.append(super_staker_fee)
 
         if len(outputs) == 3: # This is a block won by delegator 
             delegator_long_tx = json_response_loop["outputs"][2]
             delegator_long_tx_reward = get_hydra_decimal(delegator_long_tx["value"])
             delegator_long_tx_address = delegator_long_tx["address"]
             super_staker_fee = block_reward - delegator_long_tx_reward
-            print(delegator_long_tx_address)
-            print(delegator_long_tx_reward)
-            print(super_staker_fee)
-            print("output 4")
+            dict_delegator.append(delegator_long_tx_address)
+            dict_delegator.append(delegator_long_tx_reward)
+            dict_delegator.append(super_staker_fee)
+        
+        # K = 51
+        # dict_delegator_trunc = dict_delegator[:-K]
+        
+        
+        path = 'straypet-45528403089c.json'
+
+        gc = pygsheets.authorize(service_account_file=path)
+
+        sh = gc.open('Math')
+
+        wk1 = sh[0]
+        wk1.append_table(values = dict_delegator, start = 'A2', end = None, dimension = 'ROWS', overwrite = True)
+
+        # wk1.insert_rows(row=wk1.rows, number=1, values=dict_delegator)
+
+        
+
+
 
 def get_tx_id():
     wallet_address = "HM6TFbbBvrJ4hcMTFT93R7DBz1FmcUTGAC"
@@ -117,7 +141,7 @@ I identified 4 situations for mining blocks transactions  :
             output[2] is the Delegator
             output[3 4 5 ] extra fluf we need to discard
     
-
+remove last 51 transactions to do 
 
 """
 
