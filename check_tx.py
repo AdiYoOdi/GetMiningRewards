@@ -136,10 +136,8 @@ wk1.append_table(values = result, start = 'A2', end = None, dimension = 'ROWS', 
 
 
 delegators = get_delegations()
-print(delegators)
-
 balances = get_weight_delegators(delegators)
-print(balances)
+
 
 path = 'straypet-45528403089c.json'
 gc = pygsheets.authorize(service_account_file=path)
