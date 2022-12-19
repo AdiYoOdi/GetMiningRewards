@@ -1,16 +1,41 @@
 import requests
 import json
 import pygsheets
-import logging
-import pandas as pd
 
 
-logging.basicConfig(level=logging.INFO)
 hydra_decimals = 100000000
-
 
 def get_hydra_decimal(hydra_value):
     return int(hydra_value)/hydra_decimals
+
+def get_delegations():
+    Headers = {'content-type': 'text/plain;'}
+    rpc_params = '{"jsonrpc": "1.0", "id":"curltest", "method": "getdelegationsforstaker", "params": [ "HM6TFbbBvrJ4hcMTFT93R7DBz1FmcUTGAC" ] }'
+    response = requests.post('http://192.168.0.11:3389/', headers=Headers, data=rpc_params, auth=('stray', '1'))
+    json_response = json.loads(response.text)
+    results = json_response["result"]
+    delegation_data = []
+    block_height = []
+    for items in results:
+        delegators = items["delegate"]
+        blockHeight = items["blockHeight"]
+        delegation_data.append(delegators)
+        block_height.append(blockHeight)
+    return delegation_data
+
+
+def get_weight_delegators(del_address):
+    get_balances = []
+    for i in range(len(del_address)):
+        endpoint = f'https://explorer.hydrachain.org/api/address/{del_address[i]}/balance-history'
+        headers = {'User-Agent': '...', 'referer': 'https://...'}
+        response = requests.get(endpoint, headers=headers)
+        json_response = json.loads(response.text)
+        transactions = json_response["transactions"][0]
+        balance = get_hydra_decimal(transactions["balance"])
+        get_balances.append(balance)
+    return get_balances
+
 
 
 def check_txs(current_transaction):
@@ -99,12 +124,26 @@ def get_tx_id():
 all_txs = get_tx_id()
 result = check_txs(all_txs)
 result = result[:-51]
-print(result)
+print("Done!")
 
 
 path = 'straypet-45528403089c.json'
 gc = pygsheets.authorize(service_account_file=path)
-sh = gc.open('Math')
-wk1 = sh[1]
+sh = gc.open('StrayLiveData')
+wk1 = sh[9]
 wk1.clear(start = 'A2')
 wk1.append_table(values = result, start = 'A2', end = None, dimension = 'ROWS', overwrite = True)
+
+
+delegators = get_delegations()
+print(delegators)
+
+balances = get_weight_delegators(delegators)
+print(balances)
+
+path = 'straypet-45528403089c.json'
+gc = pygsheets.authorize(service_account_file=path)
+sh = gc.open('StrayLiveData')
+wk1 = sh[2]
+wk1.clear(start = 'B15:C37')
+wk1.append_table(values = (delegators, balances), start = 'B15', end = None, dimension = 'COLUMNS', overwrite = True)
