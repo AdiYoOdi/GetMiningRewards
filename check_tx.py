@@ -127,7 +127,7 @@ result = result[:-51]
 print("Done!")
 
 
-path = 'straypet-45528403089c.json'
+path = 'straypet.json'
 gc = pygsheets.authorize(service_account_file=path)
 sh = gc.open('StrayLiveData')
 wk1 = sh[9]
@@ -139,7 +139,7 @@ delegators = get_delegations()
 balances = get_weight_delegators(delegators)
 
 
-path = 'straypet-45528403089c.json'
+path = 'straypet.json'
 gc = pygsheets.authorize(service_account_file=path)
 sh = gc.open('StrayLiveData')
 wk1 = sh[2]
