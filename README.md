@@ -1,4 +1,4 @@
-# Automation tools: interact with blockchain, get data, save it and a Telegram Bot
+# Automation tools: interact with blockchain: get data, save it and send it to a Telegram Bot or Google Sheets
 
 This repository is for https://straypet.org/ , https://t.me/STRAYpet ,
 STRAY Pet is a crypto-based project aimed to help no-kill shelters around the world by donating funds needed to feed, treat, spay/neuter, and house homeless cats and dogs. Our second goal is to promote adoption of cats and dogs from shelters instead of buying pets at the stores or from breeders
