@@ -1,5 +1,11 @@
 # GetMiningRewards
 
+This repository is for https://straypet.org/ , https://t.me/STRAYpet
+STRAY Pet is a crypto-based project aimed to help no-kill shelters around the world by donating funds needed to feed, treat, spay/neuter, and house homeless cats and dogs. Our second goal is to promote adoption of cats and dogs from shelters instead of buying pets at the stores or from breeders
+
+
+-------------------------------------
+
 I identified 4 situations for mining blocks transactions  :
     
 	1. Super Staker won the block an easy transaction where there are only 2 results in  outputs:
